@@ -4,6 +4,8 @@ import { useLoaderData } from 'react-router-dom';
 function Stats() {
   
   const userData = useLoaderData();
+  userData.sort((a, b) => b.acceptedSolutionsWeek - a.acceptedSolutionsWeek);
+
   const [newUsername, setNewUsername] = useState('');
   const [usernames, setUsernames] = useState(['QuietQuerist', 'manoharss0407', 'antim_sankalp', 'user4097e']);
 
@@ -16,8 +18,8 @@ function Stats() {
 
   return (
     <>
-      <div className="text-center bg-zinc-700 flex">
-        <div className="w-full mx-auto text-white my-auto">
+      <div className="text-center bg-zinc-700 flex mt-5">
+        <div className="w-1/3 mx-auto text-white my-auto">
         <form onSubmit={handleSubmit} className="mt-4 w-1/4 mx-auto">
           <div className="flex items-center border-b-2 border-gray-600 py-2">
             <input
@@ -45,7 +47,6 @@ function Stats() {
               </tr>
             </thead>
             <tbody>
-              {/* Map through userData to display information for each user */}
               {userData.map(user => (
                 <tr key={user.username}>
                   <td className="border border-gray-600 p-2">{user.username}</td>
@@ -67,16 +68,15 @@ export default Stats;
 
 
 export const dataLoader = async () => {
-  const usernames = ["QuietQuerist", "manoharss0407", "antim_sankalp"];
+  const usernames = ["QuietQuerist", "manoharss0407", "antim_sankalp", "sghosal18222", "bishnu9009", "adityasahu6603", "Amar___"];
 
   const userData = await Promise.all(usernames.map(async (username) => {
-    // Fetch accepted solutions and contest rating for each user
     const response1 = await fetch(`http://localhost:3000/${username}/acSubmission`);
     const submissions = await response1.json();
 
     const currentTimestamp = Date.now();
     const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0); // Set to the beginning of the current day
+    startOfDay.setHours(0, 0, 0, 0); 
 
     // Set start of the week to Sunday
     const startOfWeek = new Date(startOfDay);
@@ -84,13 +84,11 @@ export const dataLoader = async () => {
     const diff = startOfWeek.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // Adjust if Sunday
     startOfWeek.setDate(diff);
 
-    // Filter submissions for today
     const filteredSubmissionsToday = submissions.submission.filter(submission => {
       const submissionTimestamp = parseInt(submission.timestamp) * 1000;
       return submissionTimestamp >= startOfDay && submissionTimestamp <= currentTimestamp;
     });
 
-    // Filter submissions for this week
     const filteredSubmissionsWeek = submissions.submission.filter(submission => {
       const submissionTimestamp = parseInt(submission.timestamp) * 1000;
       return submissionTimestamp >= startOfWeek && submissionTimestamp <= currentTimestamp;
