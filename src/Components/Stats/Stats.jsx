@@ -1,15 +1,17 @@
 import React, { useState, useEffect} from 'react';
-import { useLoaderData } from 'react-router-dom';
 
 function Stats() {
   
-  const [usernames, setUsernames] = useState(['QuietQuerist', 'manoharss0407', 'antim_sankalp', 'user4097e']);
-  // const usernames = ["QuietQuerist", "manoharss0407", "antim_sankalp", "sghosal18222", "bishnu9009", "adityasahu6603", "Amar___"];
+  const [usernames, setUsernames] = useState([]);
 
+  useEffect(()=>{
+    const localData = localStorage.getItem("usernames");
+    console.log(localData);
+    const parsedlocalData = JSON.parse(localData);
+    setUsernames(parsedlocalData);
+  }, [])
 
-  const dataLoader = async (usernames) => {
-    // const usernames = ["QuietQuerist", "manoharss0407", "antim_sankalp", "sghosal18222", "bishnu9009", "adityasahu6603", "Amar___"];
-  
+  const dataLoader = async (usernames) => {  
     const userData = await Promise.all(usernames.map(async (username) => {
       try {
         const response1 = await fetch(`http://localhost:3000/${username}/acSubmission`);
@@ -77,6 +79,7 @@ function Stats() {
   useEffect(() => {
     const fetchData = async () => {
       const data = await dataLoader(usernames);
+      data.sort((a, b) => b.acceptedSolutionsWeek - a.acceptedSolutionsWeek);
       setUserData(data);
     };
     fetchData();
@@ -93,10 +96,14 @@ function Stats() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setUsernames(prevUsernames => [...prevUsernames, newUsername]);
+    setUsernames(prevUsernames => {
+      const updatedUsernames = [...prevUsernames, newUsername];
+      localStorage.setItem('usernames', JSON.stringify(updatedUsernames));
+      return updatedUsernames;
+    });
     setNewUsername('');
-    console.log(usernames)
   };
+  
 
   if (!userData) {
     return (
@@ -116,7 +123,8 @@ function Stats() {
   return (
     <>
       <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-yellow-400 to-black text-white transition-all duration-100">
-        <div className="w-1/2 mx-auto text-white my-auto">
+        <div className="w-1/2 mx-auto text-white my-auto mt-60 mb-60">
+          <h1 className='text-center text-white'>leaderboard: according to problem solved this week</h1>
         <form onSubmit={handleSubmit} className="mt-4 mx-auto">
           <div className="flex items-centerpy-2">
             <input
@@ -127,35 +135,40 @@ function Stats() {
               placeholder="Enter LeetCode username"
             />
             <button
-              className="flex-shrink-0 bg-blue-500 hover:bg-blue-700 border-blue-500 hover:border-blue-700 text-sm border-4 text-white py-1 px-2 rounded"
+              className="flex-shrink-0 bg-gray-800 hover:bg-white hover:text-black border-gray-700 hover:border-black duration-300 text-sm border-4 text-white py-1 px-2 rounded"
               type="submit"
             >
               Add
             </button>
           </div>
         </form>
-        <table className="mx-auto mt-5 w-full border-none bg-gray-700 rounded-3xl">
-            <thead>
-              <tr>
-                <th className="border border-gray-600 p-2">Name</th>
-                <th className="border border-gray-600 p-2">UserName</th>
-                <th className="border border-gray-600 p-2">Accepted Solutions (today)</th>
-                <th className="border border-gray-600 p-2">Accepted Solutions (this week)</th>
-                <th className="border border-gray-600 p-2">Contest Rating</th>
+        <table className="mx-auto mt-5 w-full border-black shadow-2xl bg-gray-700">
+          <thead>
+            <tr>
+              <th className="border border-gray-600 p-2 text-center">Rank</th>
+              <th className="border border-gray-600 p-2 text-center">Name</th>
+              <th className="border border-gray-600 p-2 text-center">Username</th>
+              <th className="border border-gray-600 p-2 text-center">Accepted Solutions (today)</th>
+              <th className="border border-gray-600 p-2 text-center">Accepted Solutions (this week)</th>
+              <th className="border border-gray-600 p-2 text-center">Contest Rating</th>
+            </tr>
+          </thead>
+          <tbody>
+            {userData.map((user, index) => (
+              <tr key={user.username}>
+                <td className="border border-gray-600 p-2 text-center">{index + 1}</td>
+                <td className="border border-gray-600 p-2 text-center">{user.name}</td>
+                <td className="border border-gray-600 p-2 text-center">
+                  <a href={`https://leetcode.com/u/${user.username}`} target="_black">{user.username}</a>
+                </td>
+                <td className="border border-gray-600 p-2 text-center">{user.acceptedSolutionsToday}</td>
+                <td className="border border-gray-600 p-2 text-center">{user.acceptedSolutionsWeek}</td>
+                <td className="border border-gray-600 p-2 text-center">{Math.round(user.contestRating)}</td>
               </tr>
-            </thead>
-            <tbody>
-              {userData.map(user => (
-                <tr key={user.username}>
-                  <td className="border border-gray-600 p-2">{user.name}</td>
-                    <td className="border border-gray-600 p-2"> <a href={`https://leetcode.com/u/${user.username}`} target="_black">{user.username}</a> </td>
-                  <td className="border border-gray-600 p-2">{user.acceptedSolutionsToday}</td>
-                  <td className="border border-gray-600 p-2">{user.acceptedSolutionsWeek}</td>
-                  <td className="border border-gray-600 p-2">{user.contestRating}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+            ))}
+          </tbody>
+        </table>
+
         </div>
       </div>
     </>
