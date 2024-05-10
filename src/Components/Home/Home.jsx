@@ -14,11 +14,7 @@ function Home() {
           </button>
         </Link>
       </div>
-      <div className="mt-16 text-center">
-        <h2 className="text-2xl font-bold mb-4">About Me</h2>
-        <p className="text-lg mb-8">I'm a passionate problem solver with a love for coding and algorithms. Through this project, I aim to create a community of like-minded individuals who enjoy the thrill of solving complex problems.</p>
-        <p className="text-lg mb-8">Join me on this journey as we embark on a quest to sharpen our minds, improve our coding skills, and have a great time along the way!</p>
-      </div>
+
     </div>
   );
 }

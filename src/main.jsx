@@ -5,12 +5,12 @@ import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } 
 import Home from './Components/Home/Home'
 import Layout from './Layout'
 import About from './Components/About/About'
-import Stats, {dataLoader} from './Components/Stats/Stats'
+import Stats from './Components/Stats/Stats'
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout/>}>
       <Route path="" element={<Home/>}></Route>
-      <Route path="stats/" loader={dataLoader} element={<Stats/>}></Route>
+      <Route path="stats/"  element={<Stats/>}></Route>
       <Route path="about/" element={<About/>}></Route>
 
     </Route>
