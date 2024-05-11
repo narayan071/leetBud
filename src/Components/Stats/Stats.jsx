@@ -14,7 +14,7 @@ function Stats() {
   const dataLoader = async (usernames) => {  
     const userData = await Promise.all(usernames.map(async (username) => {
       try {
-        const response1 = await fetch(`http://localhost:3000/${username}/acSubmission`);
+        const response1 = await fetch(`https://alfa-leetcode-api.onrender.com/${username}/acSubmission`);
         const submissions = await response1.json();
   
         const currentTimestamp = Date.now();
@@ -40,11 +40,11 @@ function Stats() {
         const acceptedSolutionsToday = filteredSubmissionsToday.length;
         const acceptedSolutionsWeek = filteredSubmissionsWeek.length;
   
-        const response2 = await fetch(`http://localhost:3000/${username}/contest`);
+        const response2 = await fetch(`https://alfa-leetcode-api.onrender.com/${username}/contest`);
         const contestData = await response2.json();
         const contestRating = contestData.contestRating;
   
-        const response3 = await fetch(`http://localhost:3000/${username}`)
+        const response3 = await fetch(`https://alfa-leetcode-api.onrender.com/${username}`)
         const userData = await response3.json();
         const name = userData.name;
   

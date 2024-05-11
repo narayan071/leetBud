@@ -7,7 +7,7 @@ function Home() {
   useEffect(() => {
     const fetchQuestion = async () => {
       try {
-        const link = await fetch(`http://localhost:3000/daily`);
+        const link = await fetch(`https://alfa-leetcode-api.onrender.com/daily`);
         const linkData = await link.json();
         setQuestionLink(linkData.questionLink);
       } catch (error) {
